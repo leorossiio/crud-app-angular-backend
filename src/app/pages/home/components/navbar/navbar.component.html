@@ -1,0 +1,29 @@
+<nav class="navbar navbar-expand-lg bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" routerLink="/app">
+      <div>
+        <img class="logo" src="./assets/imgs/logotipo.png" alt="logotipo" />
+      </div>
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll"
+      aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarScroll">
+      <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll" style="--bs-scroll-height: 100px;">
+        <li class="nav-item">
+          <a class="nav-link" [routerLink]="['/app']" (click)="setActiveLink('home')" [class.active]="activeLink === 'home'">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" [routerLink]="['/app/users']" (click)="setActiveLink('users')" [class.active]="activeLink === 'users'">Users</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" [routerLink]="['/app/tarefas']" (click)="setActiveLink('tarefas')" [class.active]="activeLink === 'tarefas'">Tarefas</a>
+        </li>
+      </ul>
+      <form class="d-flex" role="search">
+        <button class="btn btn-outline-danger" routerLink="/">Logout</button>
+      </form>
+    </div>
+  </div>
+</nav>

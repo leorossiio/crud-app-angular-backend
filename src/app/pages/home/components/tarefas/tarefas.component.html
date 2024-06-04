@@ -1,0 +1,41 @@
+<h1 class="text-center mt-4 mb-5">Tarefas</h1>
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col" class="coluna-tabela">Descrição</th>
+      <th scope="col" class="coluna-tabela">Status</th>
+      <th scope="col" class="coluna-tabela">Ação</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let task of task" [ngClass]="{'table-warning': task.status === 'Realizando', 'table-success': task.status === 'Concluída'}">
+      <td>
+        <div class="descricao-tarefa"*ngIf="!task.editing">
+          <span>{{ task.description }}</span>
+        </div>
+        
+        <input type="text" class="form-control input-editar" *ngIf="task.editing" [(ngModel)]="task.description" (keyup.enter)="salvarEdicao(task)">
+      </td>
+      <td>
+        <div class="status" >
+          <span>{{ task.status }}</span>
+        </div>
+      </td>
+      <td>
+        <button class="btn btn-primary" style="width:110px;" [ngClass]="{'botao-verde': task.status === 'Concluída', 'botao-laranja':task.status === 'Realizando'}" (click)="botaoConcluir(task)">
+          {{ task.status === 'Não concluída' ? 'Iniciar' : task.status === 'Realizando' ? 'Realizando' : 'Concluída' }}
+        </button>
+        <span style=" margin-left: 5px; margin-right: 5px;"></span>
+        <button class="btn" 
+        [class.btn-warning]="!task.editing" 
+        [class.btn-success]="task.editing" 
+        style="width:110px;" 
+        (click)="editarTarefa(task)">
+  {{ task.editing ? 'Salvar' : 'Editar' }}
+</button>
+
+      </td>
+    </tr>
+  </tbody>
+</table>
+ 

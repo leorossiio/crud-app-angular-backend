@@ -1,0 +1,53 @@
+.botao-verde {
+    background-color: green;
+    color: white;
+    border-color: green
+  }
+
+.botao-verde:focus,
+.botao-verde:active {
+  box-shadow: 0 0 0 0.2rem rgba(0, 255, 0, 0.5); /* Adiciona um efeito de sombra verde quando o botão está ativo ou focado */
+}
+
+.botao-laranja{
+    background-color: rgb(255, 120, 48);
+    color: white;
+    border-color: rgb(255, 120, 48);
+}
+
+.botao-laranja:focus,
+.botao-laranja:active {
+  box-shadow: 0 0 0 0.2rem rgb(255, 120, 48); /* Adiciona um efeito de sombra verde quando o botão está ativo ou focado */
+}
+
+.coluna-tabela{
+    font-size: 20px;
+}
+
+.input-editar {
+    width: 80%; 
+  }
+  
+  .descricao-tarefa {
+    width: 220px;
+  display: flex; /* Usa o flexbox para alinhar verticalmente */
+  align-items: center; /* Centraliza verticalmente o conteúdo *//* Centraliza horizontalmente o conteúdo */
+  margin-top: 10px; /* Adiciona margem superior */
+  margin-bottom: 10px; /* Adiciona margem inferior */ 
+  }
+  
+  .status {
+    width: 220px;
+  display: flex; /* Usa o flexbox para alinhar verticalmente */
+  align-items: center; /* Centraliza verticalmente o conteúdo */
+  margin-top: 10px; /* Adiciona margem superior */
+  margin-bottom: 10px; /* Adiciona margem inferior */
+  }
+
+  .linha-tarefa {
+    height: 50px; /* Defina a altura da linha como desejado */
+    display: flex; /* Usa o flexbox para alinhar verticalmente o conteúdo */
+    align-items: center; /* Centraliza verticalmente o conteúdo */
+  }
+
+  
