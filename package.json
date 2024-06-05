@@ -1,6 +1,6 @@
 {
-  "name": "crud-app",
-  "version": "0.0.0",
+  "name": "crud-app-ac2",
+  "version": "1.0.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -33,7 +33,7 @@
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.6.2",
-    "mongoose": "^8.4.0",
+    "mongoose": "^8.4.1",
     "ngx-cookie-service": "^18.0.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
