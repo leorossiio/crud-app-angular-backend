@@ -1,34 +1,42 @@
-const server = express();
-
-const userController = require("../Controllers/autenticacao/user");
-const loginController = require("../Controllers/loginController");
-const todoListController = require("../Controllers/todoListController");
-const mongoose = require("mongoose");
 const express = require("express");
-require("dotenv").config();
-server.use(express.json());
+const cors = require("cors");
+const mongoose = require("mongoose");
+const dotenv = require("dotenv");
+const loginController = require("../controllers/loginController");
+const userController = require("../controllers/userController");
+const todoListController = require("../controllers/todoListController");
+
+dotenv.config(); // Carrega as variáveis de ambiente do arquivo .env
+
+const servidor = express();
+servidor.use(express.json());
+servidor.use(cors());
 
 const PORT = process.env.PORT;
-// const DB_NAME = process.env.DB_NAME
+const DB_NAME = process.env.DB_NAME;
 const DB_USER = process.env.DB_USER;
-const DB_PASSWORD = process.env.DB_PASSWORD;
-const DB_URL = `mongodb+srv://${DB_USER}:${DB_PASSWORD}@crud-app.yso2wfp.mongodb.net/}?retryWrites=true&w=majority&appName=crup-app`;
-// mongodb+srv://<username>:<password>@crud-app.yso2wfp.mongodb.net/?retryWrites=true&w=majority&appName=CRUD-APP
-//DB_USER: root
-//DB_PASSWORD: admin
+const DB_PASS = process.env.DB_PASS;
+const DB_URL = `mongodb+srv://${DB_USER}:${DB_PASS}@crud-app.yso2wfp.mongodb.net/${DB_NAME}?retryWrites=true&w=majority`;
 
-server.use("/login", loginController);
-server.use("/users", userController);
-server.use("/todoList", todoListController);
+// servidor.use("/login", loginController);
+// servidor.use("/users", userController);
+// servidor.use("/todoList", todoListController);
 
 mongoose
   .connect(DB_URL)
   .then(() => {
     console.log("Banco de dados conectado com sucesso");
-    server.listen(PORT, () => {
-      console.log(`Servidor rodando na porta ${PORT}`);
+    servidor.listen(PORT, () => {
+      console.log(`servidor rodando na porta ${PORT}`);
     });
   })
   .catch((error) => {
-    console.log(`Erro ao conectar no bando de dados. ${error}`);
+    console.log(`Erro ao conectar no banco de dados. ${error}`);
   });
+
+servidor.get("/", (req, res) => {
+  res.send("Metodo Get"); 
+});
+servidor.post("/", (req, res) => {
+  res.send("Metodo post"); 
+});
