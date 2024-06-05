@@ -1,6 +1,6 @@
 const server = express();
 
-const userController = require("../Controllers/userController");
+const userController = require("../Controllers/autenticacao/user");
 const loginController = require("../Controllers/loginController");
 const todoListController = require("../Controllers/todoListController");
 const mongoose = require("mongoose");
