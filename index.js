@@ -2,8 +2,8 @@ const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
-const loginController = require("../controllers/loginController");
-const userController = require("../Controllers/autenticacao/userController");
+const loginController = require("./Controllers/loginController");
+const userController = require("./Controllers/autenticacao/userController");
 
 // Carrega as variáveis de ambiente do arquivo .env
 dotenv.config();
