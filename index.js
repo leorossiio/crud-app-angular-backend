@@ -1,13 +1,12 @@
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
-const dotenv = require("dotenv"); // Importe o pacote dotenv primeiro
-
-// Carrega as variáveis de ambiente do arquivo .env
-dotenv.config();
-
+const dotenv = require("dotenv");
 const loginController = require("./Controllers/loginController");
 const userController = require("./Controllers/autenticacao/userController");
+const todoListController = require("./Controllers/todoListController"); 
+// Carrega as variáveis de ambiente do arquivo .env
+dotenv.config();
 
 const servidor = express();
 
@@ -17,9 +16,10 @@ servidor.use(express.json());
 // Middleware para permitir solicitações de outros domínios (CORS)
 servidor.use(cors());
 
-// Define as rotas para os controladores de login e usuário
+// Define as rotas para os controladores de login, usuário e tarefas
 servidor.use("/login", loginController);
 servidor.use("/users", userController);
+servidor.use("/todoList", todoListController); // Rota para as tarefas
 
 // Conexão com o banco de dados MongoDB
 const PORT = process.env.PORT;
