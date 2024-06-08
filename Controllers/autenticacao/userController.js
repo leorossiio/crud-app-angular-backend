@@ -1,28 +1,29 @@
 const bcryptjs = require('bcryptjs');
-const auth = require("../../middlewares/authentication");
+const autenticado = require("../../middlewares/authentication")
 const usuarioModel = require("../../models/User");
 const express = require('express');
 const userController = express.Router();
 
-// Rota para obter todos os usuários (requer autenticação)
-userController.get("/", auth, async (req, res) => {
-    try {
-        let usuarios = await usuarioModel.find();
-        return res.status(200).json(usuarios);
-    } catch (err) {
-        console.log(`Erro ao buscar usuários. ${err}`);
-        return res.status(500).json({ error: err });
-    } 
-});
+//Rotas não autenticadas:
 
-// Rota para criar um novo usuário
-userController.post("/", async (req, res) => {
+// Rota para criar um novo usuário/cliente
+userController.post("/cadastroCliente", async (req, res) => {
     const { nome, email, senha } = req.body;
+
+    // Verificar se o nome de usuário ou email já existe
+    const usuarioExistente = await usuarioModel.findOne({ $or: [{ nome: nome }, { email: email }] });
+    if (usuarioExistente) {
+        return res.status(400).json({
+            mensagem: "Nome de usuário ou email já existe!"
+        });
+    }
+
     const senhaEncrypt = await bcryptjs.hash(senha, 10);
     var user = {
         nome: nome,
         email: email,
-        senha: senhaEncrypt
+        senha: senhaEncrypt,
+        funcao: "Não definida"
     };
 
     try {
@@ -37,8 +38,12 @@ userController.post("/", async (req, res) => {
     }
 });
 
+
+
+
+
 // Rota para obter um usuário pelo email (requer autenticação)
-userController.get("/:email", auth, async (req, res) => {
+userController.get("/:email", autenticado, async (req, res) => {
     var email = req.params.email;
 
     try {
@@ -53,5 +58,21 @@ userController.get("/:email", auth, async (req, res) => {
         return res.status(500).json({ error: err });
     } 
 });
+
+
+//Rotas autenticadas:
+
+// Rota para obter todos os usuários (requer autenticação):
+userController.get("/listarUsuarios", autenticado, async (req, res) => {
+    try {
+        let usuarios = await usuarioModel.find();
+        return res.status(200).json(usuarios);
+    } catch (err) {
+        console.log(`Erro ao buscar usuários. ${err}`);
+        return res.status(500).json({ error: err });
+    } 
+});
+
+//Rotas que possuem a const autenticado são as rotas que requerem autenticação
 
 module.exports = userController;
