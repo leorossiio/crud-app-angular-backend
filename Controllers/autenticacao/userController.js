@@ -6,7 +6,7 @@ const userController = express.Router();
 
 // Rotas não autenticadas:
 
-// Rota para criar um novo usuário/cliente
+// Rota para criar um novo usuario/cliente
 userController.post("/cadastroUsuarioNaoAutenticada", async (req, res) => {
   const { nome, email, senha } = req.body;
 
@@ -42,7 +42,7 @@ userController.post("/cadastroUsuarioNaoAutenticada", async (req, res) => {
 
 // Rotas autenticadas:
 
-// Rota para obter todos os usuários
+// Rota para obter todos os usuario
 userController.get("/listarUsuarios", auth, async (req, res) => {
   try {
     let usuarios = await UserModel.find();
@@ -52,18 +52,17 @@ userController.get("/listarUsuarios", auth, async (req, res) => {
     return res.status(500).json({ error: err });
   }
 });
-// Rota para obter usuários por função
+// Rota para obter user por funcao
 userController.get("/usuariosPorFuncao", auth, async (req, res) => {
   try {
     const usuariosPorFuncao = await UserModel.aggregate([
       {
         $group: {
           _id: "$funcao",
-          total: { $sum: 1 }, // Total de usuários por função
+          total: { $sum: 1 }, // Total de user por funcao
         },
       },
     ]);
-
 
     const totalUsuarios = await UserModel.countDocuments();
 
@@ -74,7 +73,7 @@ userController.get("/usuariosPorFuncao", auth, async (req, res) => {
   }
 });
 
-// Rota para obter um usuário pelo email
+// Rota para obter um user pelo email
 userController.get("/:email", auth, async (req, res) => {
   var email = req.params.email;
 
@@ -92,6 +91,7 @@ userController.get("/:email", auth, async (req, res) => {
     return res.status(500).json({ error: err });
   }
 });
+
 userController.delete("/:id", auth, async (req, res) => {
   const userId = req.params.id;
   try {
@@ -131,7 +131,7 @@ userController.post("/cadastroUsuarioAutenticada", auth, async (req, res) => {
   }
 
   const senhaEncrypt = await bcryptjs.hash(senha, 10);
-  const funcaoNome = funcoes[funcao]; // Obtém o nome da função com base no número recebido
+  const funcaoNome = funcoes[funcao]; // Obtém o nome da funcao com base no number recebido
 
   if (!funcaoNome) {
     return res.status(400).json({
@@ -155,6 +155,43 @@ userController.post("/cadastroUsuarioAutenticada", auth, async (req, res) => {
     return res.status(500).json({
       error: error,
     });
+  }
+});
+
+// Rota para editar usuario:
+userController.put("/editarUsuario/:email", auth, async (req, res) => {
+  const userEmail = req.params.email;
+  const { nome, email, senha, funcao } = req.body;
+
+  try {
+    // Verifica se o usuário ou nao através do email
+    const user = await UserModel.findOne({ email: userEmail });
+    if (!user) {
+      return res.status(404).json({ mensagem: "Usuário não encontrado" });
+    }
+
+    // Atualiza os campos do usuário
+    if (nome) user.nome = nome;
+    if (email) user.email = email;
+    if (senha) {
+      const senhaEncrypt = await bcryptjs.hash(senha, 10);
+      user.senha = senhaEncrypt;
+    }
+    if (funcao) {
+      const funcaoNome = funcoes[funcao];
+      if (!funcaoNome) {
+        return res.status(400).json({ mensagem: "Função inválida" });
+      }
+      user.funcao = funcaoNome;
+    }
+
+    // Salva as alterações
+    await user.save();
+
+    return res.status(200).json({ mensagem: "Usuário atualizado com sucesso" });
+  } catch (error) {
+    console.error(`Um erro ocorreu ao editar o usuário. ${error}`);
+    return res.status(500).json({ error: error });
   }
 });
 
