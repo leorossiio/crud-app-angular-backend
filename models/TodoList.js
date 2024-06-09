@@ -6,8 +6,7 @@ const TodoList = mongoose.model("tarefas", {
   tarefaDescricao: String,
   tarefaAcao: Boolean,
   username: String,
+  tarefaStatus: String
 });
 
-module.exports = {
-  TodoList,
-};
+module.exports = TodoList;
