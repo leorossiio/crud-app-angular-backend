@@ -1,8 +1,17 @@
 const bcryptjs = require("bcryptjs");
-const auth = require("../../middlewares/authentication"); // Importe o middleware de autenticação corretamente
+const auth = require("../../middlewares/authentication"); // middleware para rotas autenticadas
 const UserModel = require("../../models/User");
 const express = require("express");
 const userController = express.Router();
+const { v4: uuidv4 } = require('uuid'); // para gerar UUIDs
+
+// Conversor
+const funcoes = {
+  1: "Engenheiro de FE",
+  2: "Engenheiro de BE",
+  3: "Analista de dados",
+  4: "Líder Técnico",
+};
 
 // Rotas não autenticadas:
 
@@ -21,7 +30,8 @@ userController.post("/cadastroUsuarioNaoAutenticada", async (req, res) => {
   }
 
   const senhaEncrypt = await bcryptjs.hash(senha, 10);
-  var user = {
+  const user = {
+    idUser: uuidv4(),
     nome: nome,
     email: email,
     senha: senhaEncrypt,
@@ -112,13 +122,7 @@ userController.delete("/:id", auth, async (req, res) => {
   }
 });
 
-const funcoes = {
-  1: "Engenheiro de FE",
-  2: "Engenheiro de BE",
-  3: "Analista de dados",
-  4: "Líder Técnico",
-};
-
+// Rota autenticada para cadastro de usuários
 userController.post("/cadastroUsuarioAutenticada", auth, async (req, res) => {
   const { nome, email, senha, funcao } = req.body;
 
@@ -141,6 +145,7 @@ userController.post("/cadastroUsuarioAutenticada", auth, async (req, res) => {
   }
 
   const user = {
+    idUser: uuidv4(),
     nome: nome,
     email: email,
     senha: senhaEncrypt,
@@ -165,7 +170,7 @@ userController.put("/editarUsuario/:email", auth, async (req, res) => {
   const { nome, email, senha, funcao } = req.body;
 
   try {
-    // Verifica se o usuário ou nao através do email
+    // Verifica se o usuário existe através do email
     const user = await UserModel.findOne({ email: userEmail });
     if (!user) {
       return res.status(404).json({ mensagem: "Usuário não encontrado" });
