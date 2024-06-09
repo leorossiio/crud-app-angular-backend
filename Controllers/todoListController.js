@@ -61,24 +61,42 @@ todoListController.post("/cadastroTarefas", auth, async (req, res) => {
 });
 
 // Listar tarefas do usuário logado
-// todoListController.get("/tarefasLogado", auth, async (req, res) => {
-//     const usuarioLogadoId = req.user.id; // Supondo que o middleware auth adicione o usuário logado no req.user
 
-//     try {
-//         const tarefas = await TodoList.find({ usuarioAtribuido: usuarioLogadoId });
-//         return res.status(200).json(tarefas);
-//     } catch (error) {
-//         return res.status(500).json({
-//             error: error.message
-//         });
-//     }
-// });
+// Editar tarefa do usuario logado
 
-// Listar tarefas sem dono
+// Deletar uma tarefa do usuario logado
+
+
+// Listar tarefas não atribuídas
 todoListController.get("/tarefasNaoAtribuidas", auth, async (req, res) => {
     try {
         const tarefas = await TodoList.find({ usuarioAtribuido: null });
         return res.status(200).json(tarefas);
+    } catch (error) {
+        return res.status(500).json({
+            error: error.message
+        });
+    }
+});
+
+// Adicionar dono a uma tarefa específica
+todoListController.put("/atribuirTarefa/:tarefaId", auth, async (req, res) => {
+    const { tarefaId } = req.params;
+    const { usuarioAtribuido } = req.body;
+
+    try {
+        const tarefa = await TodoList.findOne({ tarefaId: tarefaId });
+        if (!tarefa) {
+            return res.status(404).json({ mensagem: "Tarefa não encontrada" });
+        }
+
+        tarefa.usuarioAtribuido = usuarioAtribuido;
+        await tarefa.save();
+
+        return res.status(200).json({
+            mensagem: "Usuário atribuído à tarefa com sucesso!",
+            tarefa: tarefa
+        });
     } catch (error) {
         return res.status(500).json({
             error: error.message
