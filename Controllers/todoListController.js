@@ -32,9 +32,28 @@ todoListController.get("/", auth, async (req, res) => {
   }
 });
 
-
 // Listar tarefas do usuário logado
+todoListController.get(
+  "/tarefasPorUsuario/:usuarioAtribuido",
+  auth,
+  async (req, res) => {
+    try {
+      const idUsuarioAtribuido = req.params.usuarioAtribuido;
+      const tarefas = await TodoList.find({
+        usuarioAtribuido: idUsuarioAtribuido,
+      });
 
+      return res.status(200).json(tarefas);
+    } catch (error) {
+      return res
+        .status(500)
+        .json({
+          mensagem: "Erro ao buscar tarefas do usuário atribuído",
+          error: error.message,
+        });
+    }
+  }
+);
 
 // Criar uma nova tarefa
 todoListController.post("/cadastroTarefas", auth, async (req, res) => {
@@ -76,29 +95,27 @@ todoListController.post("/cadastroTarefas", auth, async (req, res) => {
   }
 });
 
-
 // Editar tarefa do usuario logado
 todoListController.put("/editar/:tarefaId", auth, async (req, res) => {
-    const { tarefaId } = req.params;
-    const tarefaUpdates = req.body; // Assumindo que os dados de atualização estão no corpo da requisição
-  
-    try {
-      const tarefa = await TodoList.findOne({ tarefaId: tarefaId });
-  
-      if (!tarefa) {
-        return res.status(404).json({ mensagem: "Tarefa não encontrada" });
-      }
-  
-      await TodoList.updateOne({ tarefaId: tarefaId }, tarefaUpdates);
-  
-      const updatedTarefa = await TodoList.findOne({ tarefaId: tarefaId });
-  
-      return res.status(200).json(updatedTarefa);
-    } catch (err) {
-      return res.status(500).json({ error: err.message });
+  const { tarefaId } = req.params;
+  const tarefaUpdates = req.body;
+
+  try {
+    const tarefa = await TodoList.findOne({ tarefaId: tarefaId });
+
+    if (!tarefa) {
+      return res.status(404).json({ mensagem: "Tarefa não encontrada" });
     }
-  });
-  
+
+    await TodoList.updateOne({ tarefaId: tarefaId }, tarefaUpdates);
+
+    const updatedTarefa = await TodoList.findOne({ tarefaId: tarefaId });
+
+    return res.status(200).json(updatedTarefa);
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+});
 
 // Deletar uma tarefa específica pelo tarefaId
 todoListController.delete("/excluir/:tarefaId", auth, async (req, res) => {
