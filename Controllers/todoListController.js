@@ -1,7 +1,10 @@
 const express = require("express");
 const todoRouter = express.Router();
 const { TodoList } = require("../models/TodoList");
-const [ UserModel ] = require("../models/User");
+// const [ UserModel ] = require("../models/User");
+
+
+// Criar uma nova tarefa
 
 // Listar as tarefas do usuário logado
 
@@ -10,9 +13,6 @@ const [ UserModel ] = require("../models/User");
 
 
 // Excluir uma tarefa específica do usuário logado
-
-
-// Criar uma nova tarefa
 
 
 // Tarefas sem dono

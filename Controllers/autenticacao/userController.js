@@ -52,6 +52,7 @@ userController.get("/listarUsuarios", auth, async (req, res) => {
     return res.status(500).json({ error: err });
   }
 });
+
 // Rota para obter user por funcao
 userController.get("/usuariosPorFuncao", auth, async (req, res) => {
   try {

@@ -10,6 +10,7 @@ const loginController = async (req, res) => {
     return res.status(400).json({ mensagem: "Usuário não encontrado" });
   }
 
+  //Processo responsavel por gerar o token e permitir a entrada em uma rota autenticada.
   if (await bcryptjs.compare(senha, user.senha)) {
     const token = jwt.sign(
       { nome: user.nome, email: user.email },
