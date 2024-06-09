@@ -3,7 +3,16 @@ const auth = require("../../middlewares/authentication"); // middleware para rot
 const UserModel = require("../../models/User");
 const express = require("express");
 const userController = express.Router();
-const { v4: uuidv4 } = require('uuid'); // para gerar UUIDs
+
+
+function generateId() {
+  const characters = '0123456789';
+  let result = '';
+  for (let i = 0; i < 5; i++) {
+    result += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+  return result;
+}
 
 // Conversor
 const funcoes = {
@@ -19,26 +28,35 @@ const funcoes = {
 userController.post("/cadastroUsuarioNaoAutenticada", async (req, res) => {
   const { nome, email, senha } = req.body;
 
-  // Verificar se o nome de usuário ou email já existe
-  const usuarioExistente = await UserModel.findOne({
-    $or: [{ nome: nome }, { email: email }],
-  });
-  if (usuarioExistente) {
-    return res.status(400).json({
-      mensagem: "Nome de usuário ou email já existe!",
-    });
-  }
-
-  const senhaEncrypt = await bcryptjs.hash(senha, 10);
-  const user = {
-    idUser: uuidv4(),
-    nome: nome,
-    email: email,
-    senha: senhaEncrypt,
-    funcao: null,
-  };
-
   try {
+    let idUser = generateId();
+    let userExistente = await UserModel.findOne({ idUser: idUser });
+
+    // Verificar se o idUser já existe e tentar novamente até encontrar um único
+    while (userExistente) {
+      idUser = generateId();
+      userExistente = await UserModel.findOne({ idUser: idUser });
+    }
+
+    const usuarioExistente = await UserModel.findOne({
+      $or: [{ nome: nome }, { email: email }],
+    });
+    if (usuarioExistente) {
+      return res.status(400).json({
+        mensagem: "Nome de usuário ou email já existe!",
+      });
+    }
+
+    const senhaEncrypt = await bcryptjs.hash(senha, 10);
+
+    const user = {
+      idUser: idUser,
+      nome: nome,
+      email: email,
+      senha: senhaEncrypt,
+      funcao: null,
+    };
+
     await UserModel.create(user);
     return res.status(201).json({
       mensagem: "Usuário criado com sucesso!",
@@ -49,6 +67,7 @@ userController.post("/cadastroUsuarioNaoAutenticada", async (req, res) => {
     });
   }
 });
+
 
 // Rotas autenticadas:
 
@@ -103,17 +122,17 @@ userController.get("/:email", auth, async (req, res) => {
   }
 });
 
-userController.delete("/:id", auth, async (req, res) => {
-  const userId = req.params.id;
+userController.delete("/:idUser", auth, async (req, res) => {
+  const idUser = req.params.idUser; // Captura o idUser
   try {
-    // Encontra o usuário pelo ObjectId no mongo
-    const user = await UserModel.findById(userId);
+  
+    const user = await UserModel.findOne({ idUser: idUser });
     // Se o usuário não existir:
     if (!user) {
       return res.status(404).json({ mensagem: "Usuário não encontrado" });
     }
     // Se existir: Remove o usuário
-    await UserModel.findByIdAndDelete(userId);
+    await UserModel.findOneAndDelete({ idUser: idUser });
     // Retorna uma mensagem de sucesso
     return res.status(200).json({ mensagem: "Usuário deletado com sucesso" });
   } catch (err) {
@@ -122,37 +141,48 @@ userController.delete("/:id", auth, async (req, res) => {
   }
 });
 
+
+
 // Rota autenticada para cadastro de usuários
 userController.post("/cadastroUsuarioAutenticada", auth, async (req, res) => {
   const { nome, email, senha, funcao } = req.body;
 
-  const usuarioExistente = await UserModel.findOne({
-    $or: [{ nome: nome }, { email: email }],
-  });
-  if (usuarioExistente) {
-    return res.status(400).json({
-      mensagem: "Nome de usuário ou email já existe!",
-    });
-  }
-
-  const senhaEncrypt = await bcryptjs.hash(senha, 10);
-  const funcaoNome = funcoes[funcao]; // Obtém o nome da funcao com base no number recebido
-
-  if (!funcaoNome) {
-    return res.status(400).json({
-      mensagem: "Função inválida!",
-    });
-  }
-
-  const user = {
-    idUser: uuidv4(),
-    nome: nome,
-    email: email,
-    senha: senhaEncrypt,
-    funcao: funcaoNome,
-  };
-
   try {
+    let idUser = generateId();
+    let userExistente = await UserModel.findOne({ idUser: idUser });
+
+    // Verificar se o idUser já existe e tentar novamente até encontrar um único
+    while (userExistente) {
+      idUser = generateId();
+      userExistente = await UserModel.findOne({ idUser: idUser });
+    }
+
+    const usuarioExistente = await UserModel.findOne({
+      $or: [{ nome: nome }, { email: email }],
+    });
+    if (usuarioExistente) {
+      return res.status(400).json({
+        mensagem: "Nome de usuário ou email já existe!",
+      });
+    }
+
+    const senhaEncrypt = await bcryptjs.hash(senha, 10);
+    const funcaoNome = funcoes[funcao];
+
+    if (!funcaoNome) {
+      return res.status(400).json({
+        mensagem: "Função inválida!",
+      });
+    }
+
+    const user = {
+      idUser: idUser,
+      nome: nome,
+      email: email,
+      senha: senhaEncrypt,
+      funcao: funcaoNome,
+    };
+
     await UserModel.create(user);
     return res.status(201).json({
       mensagem: "Usuário criado com sucesso!",
@@ -163,6 +193,7 @@ userController.post("/cadastroUsuarioAutenticada", auth, async (req, res) => {
     });
   }
 });
+
 
 // Rota para editar usuario:
 userController.put("/editarUsuario/:email", auth, async (req, res) => {
