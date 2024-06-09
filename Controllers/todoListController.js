@@ -60,4 +60,30 @@ todoListController.post("/cadastroTarefas", auth, async (req, res) => {
     }
 });
 
+// Listar tarefas do usuário logado
+// todoListController.get("/tarefasLogado", auth, async (req, res) => {
+//     const usuarioLogadoId = req.user.id; // Supondo que o middleware auth adicione o usuário logado no req.user
+
+//     try {
+//         const tarefas = await TodoList.find({ usuarioAtribuido: usuarioLogadoId });
+//         return res.status(200).json(tarefas);
+//     } catch (error) {
+//         return res.status(500).json({
+//             error: error.message
+//         });
+//     }
+// });
+
+// Listar tarefas sem dono
+todoListController.get("/tarefasNaoAtribuidas", auth, async (req, res) => {
+    try {
+        const tarefas = await TodoList.find({ usuarioAtribuido: null });
+        return res.status(200).json(tarefas);
+    } catch (error) {
+        return res.status(500).json({
+            error: error.message
+        });
+    }
+});
+
 module.exports = todoListController;
