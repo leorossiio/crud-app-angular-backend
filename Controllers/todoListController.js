@@ -76,7 +76,7 @@ todoListController.post("/cadastroTarefas", auth, async (req, res) => {
   }
 });
 
-// Editar tarefa do usuario logado
+
 // Editar tarefa do usuario logado
 todoListController.put("/editar/:tarefaId", auth, async (req, res) => {
     const { tarefaId } = req.params;
