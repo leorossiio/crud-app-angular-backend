@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const loginController = require("./Controllers/loginController");
 const userController = require("./Controllers/autenticacao/userController");
-const todoListController = require("./Controllers/todoListController"); 
+const todoListController = require("./Controllers/autenticacao/todoListController"); 
 // Carrega as variáveis de ambiente do arquivo .env
 dotenv.config();
 

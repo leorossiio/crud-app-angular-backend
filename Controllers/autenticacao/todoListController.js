@@ -1,6 +1,6 @@
 const bcryptjs = require("bcryptjs");
-const auth = require("../middlewares/authentication");
-const TodoList = require("../models/TodoList");
+const auth = require("../../middlewares/authentication");
+const TodoList = require("../../models/TodoList");
 const express = require("express");
 const todoListController = express.Router();
 
